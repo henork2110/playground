@@ -51,7 +51,7 @@ html, body {
   font-weight: 500;
   line-height: 14px;
   -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 a {
@@ -63,7 +63,7 @@ a {
 }
 a:hover { color: var(--fg-muted); }
 
-.page { padding: 8px; min-height: 100vh; }
+.page { padding: 8px; min-height: 100dvh; }
 
 .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
 
@@ -114,9 +114,9 @@ a:hover { color: var(--fg-muted); }
 }
 
 @media (max-width: 640px) {
-  .grid { grid-template-columns: repeat(2, 1fr); row-gap: 80px; }
-  .left { grid-column: 1 / span 1; }
-  .right { grid-column: 1 / span 1; }
+  .grid { grid-template-columns: repeat(5, 1fr); row-gap: 80px; }
+  .left { grid-column: 1 / span 3; }
+  .right { grid-column: 1 / span 3; }
 }
 </style>
 </head>
@@ -149,7 +149,7 @@ a:hover { color: var(--fg-muted); }
           <span class="num">00</span>
           <span>Museon</span>
         </header>
-        <p>A small tool for making shapes that sit perfectly on a grid. Useful for logo marks, icons, and patterns that need to feel structured.</p>
+        <p>A small tool for making shapes that sit perfectly on a grid.</p>
         <div class="links">
           <a href="https://museon.is">Website</a>
           <a href="https://github.com/henork2110/Museon">Github</a>
