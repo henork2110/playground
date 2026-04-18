@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playground — Manneskja</title>
+<meta name="description" content="A space to research, experiment, and build new ideas.">
+<style>
+@font-face {
+  font-family: "Suisse Intl";
+  src: url("/fonts/SuisseIntl-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --bg: #ffffff;
+  --fg: rgba(0, 0, 0, 0.9);
+  --fg-muted: rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --fg: rgba(255, 255, 255, 0.9);
+    --fg-muted: rgba(255, 255, 255, 0.5);
+  }
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+  :root {
+    --fg: color(display-p3 0 0 0 / 0.9);
+    --fg-muted: color(display-p3 0 0 0 / 0.5);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg: color(display-p3 1 1 1 / 0.9);
+      --fg-muted: color(display-p3 1 1 1 / 0.5);
+    }
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Suisse Intl", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+a:hover { color: var(--fg-muted); }
+
+.page { padding: 8px; min-height: 100vh; }
+
+.grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+
+.left { grid-column: 1 / span 1; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.right { grid-column: 6 / span 1; display: flex; flex-direction: column; align-items: flex-start; gap: 32px; }
+
+.entry { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.entry-head { display: flex; gap: 8px; }
+.num { color: var(--fg-muted); display: inline-block; width: 16px; flex-shrink: 0; }
+
+.links { display: flex; gap: 8px; width: 100%; }
+
+.notify-form { display: none; align-items: center; gap: 8px; width: 100%; }
+.notify-form.active { display: flex; }
+.notify-form.active + .notify-trigger { display: none; }
+
+.notify-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid currentColor;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  padding: 0 0 1px 0;
+  flex: 1;
+  min-width: 0;
+}
+.notify-input::placeholder { color: var(--fg-muted); }
+
+.notify-submit {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 120ms ease;
+}
+.notify-submit:hover { color: var(--fg-muted); }
+.notify-submit:disabled { cursor: default; color: var(--fg-muted); }
+
+.notify-done { color: var(--fg-muted); }
+
+@media (max-width: 1000px) {
+  .left { grid-column: 1 / span 2; }
+  .right { grid-column: 5 / span 2; }
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, 1fr); row-gap: 80px; }
+  .left, .right { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="grid">
+    <section class="left">
+      <p>A space to research, experiment, and build new ideas.</p>
+      <p>We make tools for ourselves, ship small products, and keep the rest for later.</p>
+      <p>Some of it we release openly, source and design included, for anyone to use freely.</p>
+      <p><a href="https://manneskja.is">Manneskja.is</a></p>
+    </section>
+    <section class="right">
+      <article class="entry">
+        <header class="entry-head">
+          <span class="num">01</span>
+          <span>Climb</span>
+        </header>
+        <p>A hiring tool for startups. Less than Ashby, more than a Notion page.</p>
+        <div class="links" id="climb-links">
+          <form class="notify-form" id="notify-form" onsubmit="handleNotify(event)">
+            <input type="email" class="notify-input" placeholder="your email" required autocomplete="email" />
+            <button type="submit" class="notify-submit" id="notify-submit">Send</button>
+          </form>
+          <a href="#" class="notify-trigger" id="notify-trigger" onclick="showForm(event)">Notify me</a>
+        </div>
+      </article>
+      <article class="entry">
+        <header class="entry-head">
+          <span class="num">00</span>
+          <span>Museon</span>
+        </header>
+        <p>A small tool for making shapes that sit perfectly on a grid. Useful for logo marks, icons, and patterns that need to feel structured.</p>
+        <div class="links">
+          <a href="https://museon.is">Website</a>
+          <a href="https://github.com/henork2110/Museon">Github</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</main>
+
+<script>
+  const NOTIFY_ENDPOINT = "https://formspree.io/f/xqewbbwl";
+
+  const form = document.getElementById("notify-form");
+  const trigger = document.getElementById("notify-trigger");
+  const container = document.getElementById("climb-links");
+
+  function showForm(event) {
+    event.preventDefault();
+    form.classList.add("active");
+    setTimeout(() => form.querySelector("input").focus(), 0);
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!form.classList.contains("active")) return;
+    if (form.contains(event.target) || event.target === trigger) return;
+    form.classList.remove("active");
+    form.querySelector("input").value = "";
+  });
+
+  async function handleNotify(event) {
+    event.preventDefault();
+    const input = form.querySelector("input");
+    const button = form.querySelector("button");
+
+    button.disabled = true;
+    button.textContent = "Sending";
+
+    try {
+      const response = await fetch(NOTIFY_ENDPOINT, {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ email: input.value, project: "Climb" })
+      });
+
+      if (response.ok) {
+        container.innerHTML = '<span class="notify-done">Thanks. We will be in touch.</span>';
+      } else {
+        button.textContent = "Send";
+        button.disabled = false;
+        alert("Something went wrong. Try again.");
+      }
+    } catch (err) {
+      button.textContent = "Send";
+      button.disabled = false;
+      alert("Network error. Try again.");
+    }
+  }
+</script>
+</body>
+</html>

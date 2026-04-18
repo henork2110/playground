@@ -1,0 +1,1 @@
+$(cat /home/claude/suisse_chunk_aa)
